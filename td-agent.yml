@@ -1,0 +1,28 @@
+- yum_repository:
+    name: treasuredata
+    description: TreasureData
+    baseurl: http://packages.treasuredata.com/2/redhat/$releasever/$basearch
+    gpgcheck: no
+  tags: td-agent
+
+- yum: name=td-agent-2.3.4-0.el{{ ansible_distribution_major_version }} state=installed
+  tags: td-agent
+
+- shell: /usr/sbin/td-agent-gem install {{ item }}
+  with_items:
+  - fluent-plugin-prometheus
+  - fluent-plugin-record-reformer
+  tags:
+  - td-agent
+  - td-agent.plugins
+
+- template: src={{ fluentd_conf_path }} dest=/etc/td-agent/td-agent.conf
+  notify: restart td-agent
+  tags:
+  - td-agent
+  - td-agent.conf
+
+- service: name=td-agent state=started
+  tags:
+  - td-agent
+  - td-agent.service

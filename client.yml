@@ -1,0 +1,34 @@
+- hosts:
+  - client1
+  - client2
+
+  become: yes
+
+  vars:
+    prometheus_components:
+    - node_exporter
+    prometheus_version: 1.4.1
+    prometheus_alertmanager_version: 0.5.1
+    prometheus_node_exporter_version: 0.13.0
+    fluentd_conf_path: ./td-agent.client.conf
+
+  roles:
+  - prometheus
+
+  tasks:
+
+  - include: ./td-agent.yml
+    tags: td-agent
+
+  - include: ./nginx.yml
+    tags: nginx
+
+  - yum: name={{ item }}
+    with_items: [vim, jq]
+
+  handlers:
+  - name: restart td-agent
+    service: name=td-agent state=restarted
+
+  - name: restart nginx
+    service: name=nginx state=restarted

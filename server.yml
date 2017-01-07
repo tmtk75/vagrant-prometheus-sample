@@ -1,0 +1,38 @@
+- hosts: server
+
+  become: yes
+
+  vars:
+    prometheus_components:
+    - prometheus
+    - alertmanager
+    - node_exporter
+    prometheus_version: "1.4.1"
+    prometheus_node_exporter_version: "0.13.0"
+    prometheus_alertmanager_version: "0.5.1"
+    prometheus_config_template_path: "./prometheus.yml"
+    fluentd_conf_path: ./td-agent.server.conf
+
+  pre_tasks:
+  - yum_repository:
+      name: grafana
+      description: Grafana repo
+      baseurl: https://packagecloud.io/grafana/stable/el/6/x86_64
+      gpgcheck: no
+
+  roles:
+  - { role: prometheus, tags: ['prometheus'] }
+
+  - { role: grafana, tags: ['grafana'] }
+
+  tasks:
+
+  - include: ./td-agent.yml
+    tags: td-agent
+
+  - yum: name={{ item }}
+    with_items: [vim, jq]
+
+  handlers:
+  - name: restart td-agent
+    service: name=td-agent state=restarted

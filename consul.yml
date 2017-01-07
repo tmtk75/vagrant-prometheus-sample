@@ -1,0 +1,13 @@
+- hosts: all
+
+  become: yes
+
+  vars:
+
+  pre_tasks:
+
+  roles:
+  - { role: consul }
+
+  tasks:
+

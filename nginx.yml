@@ -1,0 +1,24 @@
+- yum: name=nginx state=installed
+  tags: nginx
+
+- template: src=./nginx.conf dest=/etc/nginx/nginx.conf
+  notify: restart nginx
+  tags:
+  - nginx
+  - nginx.conf
+
+- template: src=./nginx_proxy.conf dest=/etc/nginx/conf.d/nginx_proxy.conf
+  notify: restart nginx
+  tags:
+  - nginx
+  - nginx.conf
+
+- service: name=nginx state=started
+  tags:
+  - nginx
+  - nginx.service
+
+- file: path=/var/log/nginx mode=0755
+  tags:
+  - nginx
+  - nginx.chmod

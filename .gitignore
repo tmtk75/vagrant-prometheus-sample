@@ -1,0 +1,5 @@
+*.retry
+.*.swp
+.vagrant
+roles/*
+ssh-config
