@@ -1,3 +1,7 @@
+- yum:
+    name: "@Development tools"
+    state: present
+    
 - yum_repository:
     name: treasuredata
     description: TreasureData
